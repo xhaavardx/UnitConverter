@@ -8,7 +8,6 @@ let unit = "";
 let isTestFlagOn = false;
 
 function convert() {
-    let result = 0;
     if (isRunningInBrowser()) {
         const submitButton = document.getElementById("submitBtn");
         submitButton.onclick = () => {
@@ -16,9 +15,8 @@ function convert() {
             unit = getUnit()
             userInput = getNumber()
 
-            result = converter(userInput, unit);
+            const result = converter(userInput, unit);
             document.getElementById("result").innerHTML =  `${userInput} inches = ${result} ${unit}`;
-    
         }
     } else {
         isTestFlagOn = process.argv.indexOf('-t') > -1 ? true : false;
@@ -62,10 +60,6 @@ function getUnit() {
     return selectedUnit;
 }
 
-console.log(userInput);
-console.log(unit);
-
-
 function converter(userInput, unit) {
     if (unit === "mm") {
         return userInput * INCHES_TO_MM;
@@ -75,26 +69,8 @@ function converter(userInput, unit) {
         return userInput * INCHES_TO_METERS;
     }
 }
-console.log(converter(userInput, unit));
 
-/*
-function getUserInput() {
-    if (isRunningInBrowser()) {
-        //const dropdownList = document.getElementById("unitOptions");
-        //const selectedUnit = dropdownList.options[dropdownList.selectedIndex].value;
-        //console.log(selectedUnit);
-        const userInput = document.getElementById("input").value;
-        //console.log(userInput);
-        return {userInput, selectedUnit}
-    } else {
-        const arguments = process.argv;
-        if(arguments.includes("-t")) {
-            runUnitTests()
-        } else {
-            return {userInput: arguments[2], selectedUnit: arguments[3]}
-        }
-    }
-}*/
+
 
 function getInput() {
     let input = 0;
@@ -116,28 +92,22 @@ function testConverter() {
 
     if (unit == "mm") {
         // test millimeter
-        const number = result * 10
-        const tempINCHES_TO_MM = INCHES_TO_MM * 10;
         test(() => {
-            return number % tempINCHES_TO_MM === 0;
+            return result / INCHES_TO_MM === userInput;
         }, 'converts inches to millimeters correctly');
     }
 
     if (unit == "cm") {
         //test centimeter
         test(() => {
-            const number = result * 100
-            const tempINCHES_TO_CM = INCHES_TO_CM * 100;
-            return number % tempINCHES_TO_CM === 0;
+            return result / INCHES_TO_CM === userInput;
         }, 'converts inches to centimeters correctly');
     }
 
     if (unit === "m") {
         //test meter
         test(() => {
-            const number = result * 10000;
-            const tempINCHES_TO_METERS = INCHES_TO_METERS * 10000;
-            return number % tempINCHES_TO_METERS === 0;
+            return result / INCHES_TO_METERS === userInput;
         }, 'converts inches to meters correctly');
     }
 }
@@ -157,9 +127,6 @@ function runUnitTests() {
     test(() => {
         return typeof userInput == "number";
     }, "user input is a number");
-
-    console.log("userInput type = ", typeof userInput)
-
 
     test(() => {
         if (typeof unit == "string") {
